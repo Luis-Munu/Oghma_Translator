@@ -13,6 +13,7 @@ class Config(BaseSettings):
     MODEL_API_KEY: str
     base_url: str = Field("https://api.deepseek.com", env="MODEL_URL")
     prompts_path: Path = Path("data/prompts.json")  # Updated path
+    language: str = 'fr'  # Default language
     blocked_columns: List[str] = ["author"]
     progress_file: Path = Path("data/progress.json")  # Updated path
     output_file: Path = Path("output/Project Oghma Translated.xlsx")  # Updated path
@@ -24,7 +25,7 @@ class Config(BaseSettings):
     max_retries: int = 5
     retry_delay: float = 1.0
     timeout: float = 30.0
-    language: str = 'es'  # Default language
+
 
     @field_validator('language')
     def validate_language(cls, v):
