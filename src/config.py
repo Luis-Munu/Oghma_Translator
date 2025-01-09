@@ -12,11 +12,11 @@ supported_languages = ['es', 'fr', 'de', 'pt']
 class Config(BaseSettings):
     MODEL_API_KEY: str
     base_url: str = Field("https://api.deepseek.com", env="MODEL_URL")
-    prompts_path: Path = Path("prompts.json")
+    prompts_path: Path = Path("data/prompts.json")  # Updated path
     blocked_columns: List[str] = ["author"]
-    progress_file: Path = Path("progress.json")
-    output_file: Path = Path("Project Oghma Translated.xlsx")
-    input_file: Path = Path("Project Oghma.xlsx")
+    progress_file: Path = Path("data/progress.json")  # Updated path
+    output_file: Path = Path("output/Project Oghma Translated.xlsx")  # Updated path
+    input_file: Path = Path("data/Project Oghma.xlsx")  # Updated path
     model: str = Field("deepseek-chat", env="MODEL_NAME")
     temperature: float = 0.3
     save_interval: int = 15000

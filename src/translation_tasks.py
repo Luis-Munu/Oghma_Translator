@@ -1,10 +1,10 @@
 import asyncio
 from openpyxl.utils import get_column_letter
-from config import Config
-from translator import Translator
 from progress import save_progress
 from typing import List, Dict, Any
 import pandas as pd
+from config import Config
+from translator import Translator
 
 config = Config()
 

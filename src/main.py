@@ -1,12 +1,13 @@
 import logging
 import asyncio
 from asyncio import Semaphore
+from openpyxl import load_workbook
+from openai import AsyncOpenAI
+from translation_tasks import translate_sheet
 from config import Config
 from translator import Translator
 from progress import load_progress, save_progress
-from openpyxl import load_workbook
-from translation_tasks import translate_sheet
-from openai import AsyncOpenAI
+
 
 config = Config()
 
