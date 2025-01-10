@@ -5,13 +5,11 @@ The Oghma Translation Assistant is a tool created to facilitate translating the 
 
 ### Key Features
 
-    Multi-Language Support: Currently supporting spanish, french, portuguese and german but it's easy to add a new language.
+    Multi-Language Support: Currently supporting 10 languages, adding a new one is as easy as translating the base prompt.
 
-    Cost-Effective: Translating the entire Oghma document with DeepSeek v3 costs less than 50 cents.
+    Cost-Effective: Translating the entire Oghma document with DeepSeek v3 costs less than 50 cents and takes roughly 30 minutes.
 
-    Easy to customize: You can easily change the prompts, ignore columns or adapt the logic easily.
-
-    Fully Translated Spanish Version: A fully translated Spanish version of Oghma is available in the output folder.
+    Easy to customize: You can easily change the prompts, add new logic or adapt the parsing easily.
 
     Can be stopped during execution: It will continue translating the document where it stopped.
 
@@ -24,53 +22,41 @@ The Oghma Translation Assistant is a tool created to facilitate translating the 
 
 ### Installation
 
-    Clone the Repository
+Clone the Repository
 
     git clone https://github.com/Luis-Munu/Oghma_Translator
 
-    Install Dependencies
+Install Dependencies
 
     pip install -r requirements.txt
 
-    Set Up Environment Variables
-
-    Edit the .env file in the root directory and add your DeepSeek API key, you can change the model here too:
+Edit the .env file in the root directory and add your DeepSeek API key, you can change the model here too:
 
     MODEL_API_KEY=your_deepseek_api_key
 
 
 ### Usage
 
-    Run the Translation Script
+Run the Translation Script
 
     python src/main.py
 
-    Specify Language (Optional)
+Specify Language (Optional)
 
-    By default, the translation is set to French (fr). To translate into another supported language (e.g., Spanish), modify the language parameter in src/config.py:
+By default, the translation is set to Spanish (es) and rotates through all the supported languages. To translate into another supported language, modify the language parameter when creating the Config class in src/main.py or simply remove languages from the src/config.py file.
 
-    language: str = 'es'  # For Spanish
-
-    File Paths
+#### File Paths
 
     Ensure that the file paths in src/config.py are correctly set, especially if you're using Windows. The paths are currently in Windows format.
 
 ## Configuration
-### Configuration File
+### Configuration Files
 
-The src/config.py file contains all the settings for the translation process, including API keys, file paths, and model parameters. You can customize these settings to suit your needs.
+    The src/config.py file contains most of the settings for the translation process, including supported languages, file paths and model parameters. You can customize these settings to suit your needs.
 
-    API Key: Set your DeepSeek API key in the .env file.
+    Set your model API key, url and name in the .env file.
 
-    Input and Output Files: Modify the input_file and output_file paths to point to your Oghma Excel files.
-
-    Language Support: The supported languages are listed in supported_languages. Feel free to add more languages as long as the encoding supports them.
-
-    Selected language: You can change the language you want to translate Oghma to here.
-
-### Prompts and System Messages
-
-The prompts and system messages used in the translation process are stored in data/prompts.json. You can customize these prompts to improve the quality of the translations.
+    The JSON files in the data folder contain information related to prompts, direct translation to commonly used terms in Skyrim and parsing information.
 
 ## Notes
-    Contribution: As by the license, you can do whatever you want with the project, feel free to dm me in discord if you got suggestion
+    Contribution: As by the license, you can do whatever you want with the project, feel free to dm me in discord if you got a suggestion.
