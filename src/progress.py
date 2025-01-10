@@ -18,7 +18,7 @@ def load_progress(config: Config) -> Dict[str, Any]:
                         progress['current_indices'][sheet][col] = int(row)
                 return progress
         except (json.JSONDecodeError, IOError) as e:
-            print(f"Failed to load progress file. Starting fresh. Error: {e}")
+            print(f"Failed to load progress file for {config.language}. Starting fresh. Error: {e}")
     return {
         'completed_sheets': [],
         'current_indices': {},
@@ -31,8 +31,8 @@ def save_progress(progress_data: Dict[str, Any], config: Config, workbook):
     try:
         with config.progress_file.open('w', encoding='utf-8') as f:
             json.dump(progress_data, f, ensure_ascii=False, indent=4)
-        print(f"Progress saved at {progress_data['successful_translations']} translations.")
+        print(f"Progress saved at {progress_data['successful_translations']} translations for {config.language}.")
         workbook.save(config.output_file)
-        print(f"File saved at {progress_data['successful_translations']} translations.")
+        print(f"File saved at {progress_data['successful_translations']} translations for {config.language}.")
     except IOError as e:
-        print(f"Failed to save progress: {e}")
+        print(f"Failed to save progress for {config.language}: {e}")

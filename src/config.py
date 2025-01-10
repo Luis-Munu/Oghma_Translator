@@ -1,31 +1,55 @@
 from pydantic_settings import BaseSettings
 from pathlib import Path
-from typing import List
-from pydantic import field_validator, Field, validator
+from typing import List, Dict
+from pydantic import field_validator, Field
 import json
 from dotenv import load_dotenv
 
 load_dotenv()
 
-supported_languages = ['es', 'fr', 'de', 'pt']
+supported_languages = ['es', 'fr', 'de', 'pt', 'it', 'nl', 'sv', 'no', 'fi', 'da']
 
 class Config(BaseSettings):
     MODEL_API_KEY: str
     base_url: str = Field("https://api.deepseek.com", env="MODEL_URL")
-    prompts_path: Path = Path("data/prompts.json")  # Updated path
-    language: str = 'fr'  # Default language
+    prompts_path: Path = Path("data/prompts.json")
+    knowledge_path: Path = Path("data/knowledge.json")
+    language: str = 'es'
     blocked_columns: List[str] = ["author"]
-    progress_file: Path = Path("data/progress.json")  # Updated path
-    output_file: Path = Path("output/Project Oghma Translated.xlsx")  # Updated path
-    input_file: Path = Path("data/Project Oghma.xlsx")  # Updated path
+    progress_file: Path = Path("data/progress.json")
+    output_file: Path = Path("output/Project Oghma Translated.xlsx")
+    input_file: Path = Path("data/Project Oghma.xlsx")
     model: str = Field("deepseek-chat", env="MODEL_NAME")
-    temperature: float = 0.3
+    temperature: float = 0.2
     save_interval: int = 15000
     max_concurrent_requests: int = 20
     max_retries: int = 5
     retry_delay: float = 1.0
     timeout: float = 30.0
 
+    def __init__(self, language='es', *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.language = language
+        self.output_file = Path(f"output/Project Oghma Translated_{self.language}.xlsx")
+        self.progress_file = Path(f"data/progress_{self.language}.json")
+        self._knowledge = None
+
+    @property
+    def knowledge(self) -> Dict[str, Dict[str, str]]:
+        if self._knowledge is None:
+            self._load_knowledge()
+        return self._knowledge
+
+    def _load_knowledge(self):
+        try:
+            with self.knowledge_path.open('r', encoding='utf-8') as f:
+                self._knowledge = json.load(f)
+        except json.JSONDecodeError:
+            raise ValueError("Invalid JSON format in knowledge.json")
+        except FileNotFoundError:
+            raise FileNotFoundError("knowledge.json not found")
+        except IOError:
+            raise IOError("Failed to read knowledge.json")
 
     @field_validator('language')
     def validate_language(cls, v):
@@ -42,8 +66,12 @@ class Config(BaseSettings):
         return self._load_prompt('system_prompt')
     
     @property
-    def keyword_prompt(self) -> str:
-        return self._load_prompt('keyword')
+    def keyword_start_prompt(self) -> str:
+        return self._load_prompt('start_keyword')
+    
+    @property
+    def keyword_end_prompt(self) -> str:
+        return self._load_prompt('end_keyword')
 
     def _load_prompt(self, prompt_key: str) -> str:
         try:
@@ -75,3 +103,26 @@ class Config(BaseSettings):
         if not v.exists():
             raise FileNotFoundError(f'Input file {v} not found')
         return v
+
+    @property
+    def note_patterns_path(self) -> Path:
+        return Path("data/note_patterns.json")
+
+    @property
+    def _note_patterns(self) -> Dict[str, str]:
+        """Loads note patterns from JSON file"""
+        if not hasattr(self, '_cached_note_patterns'):
+            try:
+                with self.note_patterns_path.open('r', encoding='utf-8') as f:
+                    self._cached_note_patterns = json.load(f)
+            except json.JSONDecodeError:
+                raise ValueError("Invalid JSON format in note_patterns.json")
+            except FileNotFoundError:
+                raise FileNotFoundError("note_patterns.json not found")
+            except IOError:
+                raise IOError("Failed to read note_patterns.json")
+        return self._cached_note_patterns
+
+    def get_note_pattern(self) -> str:
+        """Returns the note pattern for the current language"""
+        return self._note_patterns.get(self.language, '')
